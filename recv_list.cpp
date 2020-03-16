@@ -26,6 +26,7 @@ void RecvList::insertPkt(char *pkt, int len , int nextN,uint32_t seq){
 	list[insertIdx].nextN = nextN ;
 	list[insertIdx].data = (char*)malloc(len) ;
 	memcpy(list[insertIdx].data , pkt , len) ;
+	if(seq > back ) back = seq ;
 }
 
 bool RecvList::hasFrame(){
@@ -70,4 +71,16 @@ void RecvList::lossFrame(int seq) {
 		memset(&list[fronttmp],0,sizeof(struct pkt_slice_t)) ;
 		fronttmp = (fronttmp+1) % RECV_LIST_SZ ;
 	}
+}
+
+void RecvList::lossFrame(){
+	cout << "lossFrame : seq = " << endl ;
+	while(front <= back){
+		if(list[front].data) free(list[front].data) ;
+		memset(&list[front],0,sizeof(struct pkt_slice_t)) ;
+		front = (front+1) % RECV_LIST_SZ ;
+	}
+	front = 0 ;
+	back = 0 ;
+	front_indicate = 0 ;
 }

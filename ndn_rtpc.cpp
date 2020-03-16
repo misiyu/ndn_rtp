@@ -145,13 +145,11 @@ void ndn_rtpc::onTimeout(const Interest& interest) {
 	long lifetime = interest.getInterestLifetime().count() ;
 	string interestName = interest.getName().toUri() ;
 	if(lifetime > 1000){
-		this->m_face.shutdown() ;
 		cout << "too many timeout" << endl ;
 		int idx1 = interestName.find_last_of('/') +1 ;
 		int lossPktSeq = atoi(interestName.substr(idx1,interestName.length() 
 					- idx1).data()) ;
 		recvList.lossFrame(lossPktSeq) ;
-		//cout << "hello" << endl ;
 		interestName = interestName.substr(0,idx1) + to_string(lossPktSeq+1) ;
 	}
 	myExpressInterest( interestName , lifetime+200) ;
